@@ -1,6 +1,7 @@
 import re
 import os
 import pandas as pd
+from datetime import datetime
 
 def write_tsv(data, column_list, path):
     """This function converts a nested dictionary to a TSV file with 3 columns."""
@@ -11,14 +12,14 @@ def write_tsv(data, column_list, path):
     df = pd.DataFrame(rows, columns=column_list)
     df.to_csv(path, sep="\t", index=False)
 
-# Folder with Al Jazeera articles
-folder = "articles" 
+# Open folder with Al Jazeera articles
+folder = "../articles" 
 
-# Gazetteer file
-gazetteer_path = "gazetteers/geonames_gaza_selection.tsv"
+# OPen gazetteer file
+gazetteer_path = "../gazetteers/geonames_gaza_selection.tsv"
 
 # Load the gazetteer
-df = pd.read_csv(gazetteer_path)
+df = pd.read_csv(gazetteer_path, sep="\t")
 
 # Build dictionary of compiled regex patterns
 place_patterns = {}
