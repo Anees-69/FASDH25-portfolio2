@@ -3,33 +3,42 @@ import plotly.express as px
 
 # Load data
 counts = pd.read_csv("regex_counts.tsv", sep="\t")
-coords = pd.read_csv("ner_gazetteer.tsv", sep="\t")
+coords = pd.read_csv("gazetteers/geonames_gaza_selection.tsv", sep="\t")
 
-# Check column names and adjust if needed
-print("Counts columns:", counts.columns)
-print("Coords columns:", coords.columns)
+# Clean column names
+counts.columns = counts.columns.str.strip()
+coords.columns = coords.columns.str.strip()
 
-# Merge on place name
-merged = pd.merge(counts, coords, on="name", how="inner")
+# Rename for consistency
+coords = coords.rename(columns={
+    "asciiname": "placename",
+    "latitude": "latitude",
+    "longitude": "longitude"
+})
 
-# Create the animated map
-fig = px.scatter_geo(
-    merged,
+# Merge
+data = pd.merge(counts, coords, on="placename")
+
+# Clean numeric values
+data["count"] = pd.to_numeric(data["count"], errors="coerce")
+data = data.dropna(subset=["count", "latitude", "longitude"])
+
+# Create animated map
+fig = px.scatter_map(
+    data,
     lat="latitude",
     lon="longitude",
+    hover_name="placename",
     size="count",
-    color="name",
-    hover_name="name",
     animation_frame="month",
-    projection="natural earth",
-    title="Regex-Extracted Place Names Over Time"
+    color="count",
+    color_continuous_scale=px.colors.sequential.YlOrRd,
+    title="Regex-Extracted Place Map"
 )
 
-# Save the interactive map as HTML
+# Save outputs
 fig.write_html("regex_map.html")
 
-# Save the map as PNG (requires kaleido)
-fig.write_image("regex_map.png", scale=2)
 
-# Show the map in browser
-fig.show()
+# Show the map
+fig.show() 
