@@ -23,7 +23,7 @@ data = pd.merge(counts, coords, on="placename")
 data["count"] = pd.to_numeric(data["count"], errors="coerce")
 data = data.dropna(subset=["count", "latitude", "longitude"])
 
-# Create animated map
+# Create animated map using the new scatter_map (MapLibre backend)
 fig = px.scatter_map(
     data,
     lat="latitude",
@@ -33,12 +33,22 @@ fig = px.scatter_map(
     animation_frame="month",
     color="count",
     color_continuous_scale=px.colors.sequential.YlOrRd,
-    title="Regex-Extracted Place Map"
+    title="Regex-Extracted Place Map",
+    zoom=4,
+    height=600
 )
+
+fig.update_layout(margin={"r": 0, "t": 40, "l": 0, "b": 0})
 
 # Save outputs
 fig.write_html("regex_map.html")
-fig.write_image("regex_map.png")
+
+# Save the static image (requires kaleido)
+try:
+    fig.write_image("regex_map.png", engine="kaleido")
+    print("regex_map.png successfully saved.")
+except Exception as e:
+    print(f"Error saving regex_map.png: {e}")
 
 # Show the map
-fig.show() 
+fig.show()
