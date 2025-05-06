@@ -3,7 +3,7 @@ import plotly.express as px
 
 # Load data
 counts = pd.read_csv("regex_counts.tsv", sep="\t")
-coords = pd.read_csv("gazetteers/geonames_gaza_selection.tsv", sep="\t")
+coords = pd.read_csv("geonames_gaza_selection.tsv", sep="\t")
 
 # Clean column names
 counts.columns = counts.columns.str.strip()
@@ -38,7 +38,7 @@ fig = px.scatter_map(
 
 # Save outputs
 fig.write_html("regex_map.html")
-
+fig.write_image("regex_map.png")
 
 # Show the map
 fig.show() 
