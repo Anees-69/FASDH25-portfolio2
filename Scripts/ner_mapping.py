@@ -23,6 +23,9 @@ fig = px.scatter_geo(
     lon="longitude",
     text="name",
     size="frequency",
+    color="frequency"
+    height=600
+    color_continuous_scale=px.colors.sequential.Y10rRd,
     projection="natural earth",
     title="NER-extracted Placename Mentions in January 2024"
 )
